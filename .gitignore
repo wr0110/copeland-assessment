@@ -1,0 +1,14 @@
+node_modules/
+dist/
+coverage/
+.env
+*.log
+.DS_Store
+
+# wireguard secrets - keys are generated locally, never committed
+vpn/server/*.conf
+vpn/server/privatekey*
+vpn/server/publickey*
+vpn/client/*.conf
+!vpn/server/wg0.conf.example
+!vpn/client/wg0-client.conf.example
