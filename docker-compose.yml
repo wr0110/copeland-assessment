@@ -1,0 +1,44 @@
+networks:
+  internal:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24
+
+services:
+  app:
+    build: .
+    env_file: .env
+    environment:
+      PORT: 3000
+    networks:
+      internal:
+        ipv4_address: 172.28.0.10
+    restart: unless-stopped
+    # no ports: on purpose - only reachable via the wireguard container
+
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:latest
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - SERVERURL=${VPN_SERVER_URL:-auto}
+      - SERVERPORT=51820
+      - PEERS=1
+      - PEERDNS=auto
+      - INTERNAL_SUBNET=10.13.13.0
+      # lets connected clients reach the app container on the docker network
+      - ALLOWEDIPS=10.13.13.1/32,172.28.0.0/24
+    volumes:
+      - ./vpn/server:/config
+    ports:
+      - '51820:51820/udp'
+    networks:
+      internal:
+        ipv4_address: 172.28.0.2
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
