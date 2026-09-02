@@ -5,10 +5,9 @@ coverage/
 *.log
 .DS_Store
 
-# wireguard secrets - keys are generated locally, never committed
-vpn/server/*.conf
-vpn/server/privatekey*
-vpn/server/publickey*
-vpn/client/*.conf
-!vpn/server/wg0.conf.example
-!vpn/client/wg0-client.conf.example
+# wireguard generates keys and peer configs into these at runtime -
+# never commit real private keys
+vpn/server/*
+vpn/client/*
+!vpn/server/.gitkeep
+!vpn/client/.gitkeep
